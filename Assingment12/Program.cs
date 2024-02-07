@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace VirtualPet
 {
@@ -13,6 +13,7 @@ namespace VirtualPet
             Console.WriteLine("Please enter a name for your pet: ");
             string petName = Console.ReadLine();
             Pet pet = new Pet(petType, petName);
+            Console.WriteLine($"You have chosen a {pet.Type} named {pet.Name}.");
 
             // Pet Care Actions
             bool exit = false;
@@ -45,91 +46,80 @@ namespace VirtualPet
                 }
 
                 // Pet Status Monitoring
-                pet.DisplayStats();
+                Console.WriteLine($"Hunger: {pet.Hunger}/10");
+                Console.WriteLine($"Happiness: {pet.Happiness}/10");
+                Console.WriteLine($"Health: {pet.Health}/10");
 
                 // Time-Based Changes
-                pet.PassTime();
+                pet.IncreaseHunger();
+                pet.DecreaseHappiness();
 
                 // Enhanced Interaction Logic
-                pet.CheckStatus();
+                if (pet.Hunger <= 2)
+                {
+                    Console.WriteLine("Your pet is very hungry. Please feed it.");
+                }
+                if (pet.Happiness <= 2)
+                {
+                    Console.WriteLine("Your pet is very unhappy. It refuses to play.");
+                }
 
-                // User Interface and Experience
-                Console.WriteLine();
+                // Exit the application if the pet's health is critically low
+                if (pet.Health <= 2)
+                {
+                    Console.WriteLine("Your pet's health is critically low. Goodbye!");
+                    exit = true;
+                }
             }
         }
     }
 
     class Pet
     {
-        private string type;
-        private string name;
-        private int hunger;
-        private int happiness;
-        private int health;
+        public string Type { get; }
+        public string Name { get; }
+        public int Hunger { get; private set; }
+        public int Happiness { get; private set; }
+        public int Health { get; private set; }
 
         public Pet(string type, string name)
         {
-            this.type = type;
-            this.name = name;
-            this.hunger = 5;
-            this.happiness = 5;
-            this.health = 5;
+            Type = type;
+            Name = name;
+            Hunger = 5;
+            Happiness = 5;
+            Health = 5;
         }
 
         public void Feed()
         {
-            Console.WriteLine($"{name} is eating.");
-            hunger--;
-            health++;
+            Hunger -= 2;
+            Health += 1;
+            Console.WriteLine($"{Name} is eating. Hunger decreased and health increased.");
         }
 
         public void Play()
         {
-            Console.WriteLine($"{name} is playing.");
-            happiness++;
-            hunger++;
+            Happiness += 1;
+            Hunger += 1;
+            Console.WriteLine($"{Name} is playing. Happiness increased and hunger slightly increased.");
         }
 
         public void Rest()
         {
-            Console.WriteLine($"{name} is resting.");
-            health++;
-            happiness--;
+            Health += 1;
+            Happiness -= 1;
+            Console.WriteLine($"{Name} is resting. Health improved and happiness slightly decreased.");
         }
 
-        public void DisplayStats()
+        public void IncreaseHunger()
         {
-            Console.WriteLine($"Stats for {name}:");
-            Console.WriteLine($"Hunger: {hunger}/10");
-            Console.WriteLine($"Happiness: {happiness}/10");
-            Console.WriteLine($"Health: {health}/10");
+            Hunger += 1;
         }
 
-        public void PassTime()
+        public void DecreaseHappiness()
         {
-            hunger++;
-            happiness--;
-        }
-
-        public void CheckStatus()
-        {
-            if (hunger <= 2)
-            {
-                Console.WriteLine($"{name} is very hungry. Please feed {name}!");
-            }
-            else if (hunger >= 8)
-            {
-                Console.WriteLine($"{name} is too full. {name} doesn't want to eat right now.");
-            }
-
-            if (happiness <= 2)
-            {
-                Console.WriteLine($"{name} is very unhappy. {name} wants to play!");
-            }
-            else if (happiness >= 8)
-            {
-                Console.WriteLine($"{name} is very happy. {name} doesn't want to play right now.");
-            }
+            Happiness -= 1;
         }
     }
 }
